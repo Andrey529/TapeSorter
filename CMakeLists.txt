@@ -3,4 +3,9 @@ project(TapeSorter)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(TapeSorter src/main.cpp src/Tape.h src/TapeImpl.cpp src/TapeImpl.h src/TapeSorter.cpp src/TapeSorter.h)
+add_executable(TapeSorter
+        src/main.cpp
+        src/Tape.h
+        src/TapeImpl.cpp src/TapeImpl.h
+        src/TapeSorter.cpp src/TapeSorter.h src/TapeGenerator.cpp src/TapeGenerator.h)
+add_subdirectory(tests)

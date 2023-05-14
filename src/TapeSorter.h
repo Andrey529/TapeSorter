@@ -1,20 +1,26 @@
 #ifndef TAPESORTER_TAPESORTER_H
 #define TAPESORTER_TAPESORTER_H
 
-
-#include <fstream>
+#include "TapeImpl.h"
 
 namespace TapeSorter {
     class TapeSorter {
     public:
-        TapeSorter();
-        void process();
+        TapeSorter(const std::string &inputFileName, const std::string &outputFileName);
+        TapeSorter(std::string &&inputFileName, std::string &&outputFileName);
         ~TapeSorter();
+
+        void process();
+
     private:
-        std::ofstream outputFile_;
-        std::ifstream inputFile_;
-        void readInputTape();
-        void writeOutputTape();
+        std::string inputFileName_;
+        std::string outputFileName_;
+
+        size_t splitInputTape(const std::string &inputFileName, const std::string &outputPartFilesName,
+                              const int &countElementsInPart);
+
+        void sortParts(const size_t &partsCount, const std::string &outputPartFilesName);
+        void formResultTape(const size_t &partsCount, const std::string &outputPartFilesName);
     };
 } // namespace TapeSorter
 
