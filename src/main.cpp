@@ -9,7 +9,12 @@ int main(int argc, char *argv[]) {
     }
 
     TapeSorter::TapeSorter tapeSorter(argv[1], argv[2]);
-    tapeSorter.sort("../tmp/", 10);
+    try {
+        tapeSorter.sort("../tmp/", 2);
+    } catch (const std::exception &exception) {
+        std::cerr << exception.what() << std::endl;
+        return -1;
+    }
 
     return 0;
 }

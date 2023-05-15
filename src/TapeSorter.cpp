@@ -11,9 +11,13 @@ TapeSorter::TapeSorter::~TapeSorter() = default;
 
 
 void TapeSorter::TapeSorter::sort(const std::string &outputPartFilesName, const int &countElementsInPart) {
-    size_t partsCount = splitInputTape(outputPartFilesName, countElementsInPart);
-    sortParts(partsCount, outputPartFilesName);
-    formResultTape(partsCount, outputPartFilesName);
+    try {
+        size_t partsCount = splitInputTape(outputPartFilesName, countElementsInPart);
+        sortParts(partsCount, outputPartFilesName);
+        formResultTape(partsCount, outputPartFilesName);
+    } catch (const std::exception &exception) {
+        throw;
+    }
 }
 
 size_t TapeSorter::TapeSorter::splitInputTape(const std::string &outputPartFilesName, const int &countElementsInPart) {
@@ -54,17 +58,21 @@ size_t TapeSorter::TapeSorter::splitInputTape(const std::string &outputPartFiles
 }
 
 void TapeSorter::TapeSorter::sortParts(const size_t &partsCount, const std::string &outputPartFilesName) {
-    for (int i = 0; i < partsCount; ++i) {
-        std::string fileName(outputPartFilesName + std::to_string(i + 1) + ".txt");
-        TapeImpl tapeImple(fileName);
-        Tape &tape = tapeImple;
+    try {
+        for (int i = 0; i < partsCount; ++i) {
+            std::string fileName(outputPartFilesName + std::to_string(i + 1) + ".txt");
+            TapeImpl tapeImple(fileName);
+            Tape &tape = tapeImple;
 
-        std::vector<int> elements = tape.readFull();
-        if (!elements.empty()) {
-            std::sort(elements.begin(), elements.end());
+            std::vector<int> elements = tape.readFull();
+            if (!elements.empty()) {
+                std::sort(elements.begin(), elements.end());
 
-            tape.writeElements(elements);
+                tape.writeElements(elements);
+            }
         }
+    } catch (const std::exception &) {
+        throw;
     }
 }
 
