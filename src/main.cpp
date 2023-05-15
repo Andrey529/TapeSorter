@@ -1,6 +1,5 @@
 #include <iostream>
 #include "TapeSorter.h"
-//#include "TapeGenerator.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -9,10 +8,8 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-//    TapeSorter::TapeGenerator::generateTape(argv[1], 100, -1000, 1000);
-
     TapeSorter::TapeSorter tapeSorter(argv[1], argv[2]);
-    tapeSorter.process();
+    tapeSorter.sort("../tmp/", 10);
 
     return 0;
 }

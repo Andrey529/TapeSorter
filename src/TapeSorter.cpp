@@ -10,17 +10,14 @@ TapeSorter::TapeSorter::TapeSorter(std::string &&inputFileName, std::string &&ou
 TapeSorter::TapeSorter::~TapeSorter() = default;
 
 
-void TapeSorter::TapeSorter::process() {
-    std::string outputPartFilesName = "../tmp/";
-    int countElementsInPart = 10;
-    size_t partsCount = splitInputTape(inputFileName_, outputPartFilesName, countElementsInPart);
+void TapeSorter::TapeSorter::sort(const std::string &outputPartFilesName, const int &countElementsInPart) {
+    size_t partsCount = splitInputTape(outputPartFilesName, countElementsInPart);
     sortParts(partsCount, outputPartFilesName);
     formResultTape(partsCount, outputPartFilesName);
 }
 
-size_t TapeSorter::TapeSorter::splitInputTape(const std::string &inputFileName, const std::string &outputPartFilesName,
-                                              const int &countElementsInPart) {
-    std::ifstream inputFile(inputFileName);
+size_t TapeSorter::TapeSorter::splitInputTape(const std::string &outputPartFilesName, const int &countElementsInPart) {
+    std::ifstream inputFile(inputFileName_);
     if (inputFile.is_open()) {
         int partsCount = 0;
         std::string numberInString;
@@ -29,7 +26,7 @@ size_t TapeSorter::TapeSorter::splitInputTape(const std::string &inputFileName, 
             int curruntPartSize = 0;
             std::ofstream outputFile(outputPartFilesName + std::to_string(partsCount) + ".txt");
             while (curruntPartSize < countElementsInPart) {
-                char c = inputFile.get();
+                char c = static_cast<char>(inputFile.get());
 
                 if (c == ' ' || c == '\n') {
                     ++curruntPartSize;
@@ -62,61 +59,72 @@ void TapeSorter::TapeSorter::sortParts(const size_t &partsCount, const std::stri
         TapeImpl tapeImple(fileName);
         Tape &tape = tapeImple;
 
-        std::vector<int> elements = tape.readFullTape();
+        std::vector<int> elements = tape.readFull();
         if (!elements.empty()) {
             std::sort(elements.begin(), elements.end());
 
-            tape.writeTape(elements);
+            tape.writeElements(elements);
         }
     }
 }
 
 void TapeSorter::TapeSorter::formResultTape(const size_t &partsCount, const std::string &outputPartFilesName) {
 
-    std::vector<int> firstElements;
+    using index = int;
+    using element = int;
+
+    std::unordered_map<index, element> firstElements;
+
     for (int i = 0; i < partsCount; ++i) {
         std::string fileName(outputPartFilesName + std::to_string(i + 1) + ".txt");
         TapeImpl tapeImple(fileName);
         Tape &tape = tapeImple;
 
-        firstElements.emplace_back(tape.readFirstElemTape());
-    }
-
-
-    size_t indexMin = 0;
-    int min = firstElements[0];
-    for (int i = 1; i < firstElements.size(); ++i) {
-        if (firstElements[i] < min) {
-            indexMin = i;
-            min = firstElements[i];
+        try {
+            firstElements.emplace(i, tape.readFirstElement());
+        } catch (const std::exception &) {
+            throw;
         }
     }
 
-    for (int i = 0; i < firstElements.size(); ++i) {
-        std::cout << firstElements[i] << ' ';
+    std::ofstream resultFile(outputFileName_);
+
+    while (true) {
+        index indexMin = -1;
+        element minFirstElem;
+        for (const auto &elem: firstElements) {
+            if (indexMin == -1) {
+                indexMin = elem.first;
+                minFirstElem = elem.second;
+            } else {
+                if (elem.second < minFirstElem) {
+                    indexMin = elem.first;
+                    minFirstElem = elem.second;
+                }
+            }
+        }
+
+        if (indexMin == -1) {
+            resultFile.close();
+            break;
+        }
+
+        resultFile << minFirstElem << ' ';
+
+        std::string fileName(outputPartFilesName + std::to_string(indexMin + 1) + ".txt");
+        TapeImpl tapeImple(fileName);
+        Tape &tape = tapeImple;
+
+        try {
+            tape.eraseFirstElement();
+            firstElements[indexMin] = tape.readFirstElement();
+        } catch (const EmptyTapeException &) {
+            firstElements.erase(indexMin);
+        } catch (const std::exception &) {
+            resultFile.close();
+            throw;
+        }
     }
-
-
-//    std::ofstream resultFile(argv[2]);
-//    for (int i = 0; i < numbers.size(); ++i) {
-//        if (i == indexMin) {
-//
-//        }
-//    }
-
-//    while (true) {
-//
-//        int countEmpty = 0;
-//        for (int i = 0; i < partsCount; ++i) {
-//            if (inputFiles[i].eof()) {
-//                countEmpty++;
-//            }
-//        }
-//        if (countEmpty == partsCount) {
-//            break;
-//        }
-//    }
-
 
 }
 

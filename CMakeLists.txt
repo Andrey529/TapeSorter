@@ -7,5 +7,7 @@ add_executable(TapeSorter
         src/main.cpp
         src/Tape.h
         src/TapeImpl.cpp src/TapeImpl.h
-        src/TapeSorter.cpp src/TapeSorter.h src/TapeGenerator.cpp src/TapeGenerator.h)
+        src/TapeSorter.cpp src/TapeSorter.h
+        src/TapeGenerator.cpp src/TapeGenerator.h
+        src/TapeExceptions.cpp src/TapeExceptions.h)
 add_subdirectory(tests)

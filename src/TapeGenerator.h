@@ -11,11 +11,11 @@ namespace TapeSorter {
     class TapeGenerator {
     public:
         static void generateTape(const std::string &fileName, const size_t &countElements,
-                          const int &leftBorder, const int &rightBorder);
+                                 const int &leftBorder, const int &rightBorder);
 
     };
 
-}
+} // namespace TapeSorter
 
 
 #endif //TAPESORTER_TAPEGENERATOR_H
