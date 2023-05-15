@@ -10,37 +10,37 @@ TapeSorter::TapeSorter::TapeSorter(std::string &&inputFileName, std::string &&ou
 TapeSorter::TapeSorter::~TapeSorter() = default;
 
 
-void TapeSorter::TapeSorter::sort(const std::string &outputPartFilesName, const int &countElementsInPart) {
+void TapeSorter::TapeSorter::sort(const std::string &outputTempTapeFilesName, const int &countElementsInTempTape) {
     try {
-        size_t partsCount = splitInputTape(outputPartFilesName, countElementsInPart);
-        sortParts(partsCount, outputPartFilesName);
-        formResultTape(partsCount, outputPartFilesName);
+        size_t tempTapesCount = splitInputTape(outputTempTapeFilesName, countElementsInTempTape);
+        sortTempTapes(tempTapesCount, outputTempTapeFilesName);
+        formResultTape(tempTapesCount, outputTempTapeFilesName);
     } catch (const std::exception &exception) {
         throw;
     }
 }
 
-size_t TapeSorter::TapeSorter::splitInputTape(const std::string &outputPartFilesName, const int &countElementsInPart) {
+size_t TapeSorter::TapeSorter::splitInputTape(const std::string &outputTempTapeFilesName, const int &countElementsInTempTape) {
     std::ifstream inputFile(inputFileName_);
     if (inputFile.is_open()) {
-        int partsCount = 0;
+        int tempTapesCount = 0;
         std::string numberInString;
         while (!inputFile.eof()) {
-            ++partsCount;
-            int curruntPartSize = 0;
-            std::ofstream outputFile(outputPartFilesName + std::to_string(partsCount) + ".txt");
-            while (curruntPartSize < countElementsInPart) {
+            ++tempTapesCount;
+            int curruntTempTapeSize = 0;
+            std::ofstream outputFile(outputTempTapeFilesName + std::to_string(tempTapesCount) + ".txt");
+            while (curruntTempTapeSize < countElementsInTempTape) {
                 char c = static_cast<char>(inputFile.get());
 
                 if (c == ' ' || c == '\n') {
-                    ++curruntPartSize;
+                    ++curruntTempTapeSize;
                     outputFile << numberInString << ' ';
                     numberInString.clear();
                     continue;
                 }
 
                 if (inputFile.eof()) {
-                    ++curruntPartSize;
+                    ++curruntTempTapeSize;
                     outputFile << numberInString;
                     numberInString.clear();
                     break;
@@ -52,15 +52,15 @@ size_t TapeSorter::TapeSorter::splitInputTape(const std::string &outputPartFiles
             outputFile.close();
         }
         inputFile.close();
-        return partsCount;
+        return tempTapesCount;
     }
     return -1;
 }
 
-void TapeSorter::TapeSorter::sortParts(const size_t &partsCount, const std::string &outputPartFilesName) {
+void TapeSorter::TapeSorter::sortTempTapes(const size_t &tempTapesCount, const std::string &outputTempTapeFilesName) {
     try {
-        for (int i = 0; i < partsCount; ++i) {
-            std::string fileName(outputPartFilesName + std::to_string(i + 1) + ".txt");
+        for (int i = 0; i < tempTapesCount; ++i) {
+            std::string fileName(outputTempTapeFilesName + std::to_string(i + 1) + ".txt");
             TapeImpl tapeImple(fileName);
             Tape &tape = tapeImple;
 
@@ -76,15 +76,15 @@ void TapeSorter::TapeSorter::sortParts(const size_t &partsCount, const std::stri
     }
 }
 
-void TapeSorter::TapeSorter::formResultTape(const size_t &partsCount, const std::string &outputPartFilesName) {
+void TapeSorter::TapeSorter::formResultTape(const size_t &tempTapesCount, const std::string &outputTempTapeFilesName) {
 
     using index = int;
     using element = int;
 
     std::unordered_map<index, element> firstElements;
 
-    for (int i = 0; i < partsCount; ++i) {
-        std::string fileName(outputPartFilesName + std::to_string(i + 1) + ".txt");
+    for (int i = 0; i < tempTapesCount; ++i) {
+        std::string fileName(outputTempTapeFilesName + std::to_string(i + 1) + ".txt");
         TapeImpl tapeImple(fileName);
         Tape &tape = tapeImple;
 
@@ -119,7 +119,7 @@ void TapeSorter::TapeSorter::formResultTape(const size_t &partsCount, const std:
 
         resultFile << minFirstElem << ' ';
 
-        std::string fileName(outputPartFilesName + std::to_string(indexMin + 1) + ".txt");
+        std::string fileName(outputTempTapeFilesName + std::to_string(indexMin + 1) + ".txt");
         TapeImpl tapeImple(fileName);
         Tape &tape = tapeImple;
 

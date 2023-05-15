@@ -14,17 +14,17 @@ namespace TapeSorter {
 
         ~TapeSorter();
 
-        void sort(const std::string &outputPartFilesName, const int &countElementsInPart);
+        void sort(const std::string &outputTempTapeFilesName, const int &countElementsInTempTape);
 
     private:
         std::string inputFileName_;
         std::string outputFileName_;
 
-        size_t splitInputTape(const std::string &outputPartFilesName, const int &countElementsInPart);
+        size_t splitInputTape(const std::string &outputTempTapeFilesName, const int &countElementsInTempTape);
 
-        void sortParts(const size_t &partsCount, const std::string &outputPartFilesName);
+        void sortTempTapes(const size_t &tempTapesCount, const std::string &outputTempTapeFilesName);
 
-        void formResultTape(const size_t &partsCount, const std::string &outputPartFilesName);
+        void formResultTape(const size_t &tempTapesCount, const std::string &outputTempTapeFilesName);
     };
 } // namespace TapeSorter
 
