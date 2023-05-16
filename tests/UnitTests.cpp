@@ -217,7 +217,6 @@ TEST(Tape, eraseFirstElement_test3) {
 }
 
 
-
 TEST(TapeGenerator, generateTape_test1) {
     std::string fileName("../../tests/testDataFiles/input.txt");
     int countElements = 100;
@@ -235,7 +234,6 @@ TEST(TapeGenerator, generateTape_test1) {
 }
 
 
-
 TEST(TapeSorter, Sorting_test1) {
     std::string inputFileName("../../tests/testDataFiles/input.txt");
     std::string ouputFileName("../../tests/testDataFiles/output.txt");
@@ -245,18 +243,19 @@ TEST(TapeSorter, Sorting_test1) {
     TapeSorter::Tape &tapeOriginal = tapeImplOriginal;
     tapeOriginal.writeElements(disorderedElements);
 
+    TapeSorter::TapeImpl tapeImplResult(ouputFileName);
+    TapeSorter::Tape &tapeResult = tapeImplResult;
 
-    TapeSorter::TapeSorter tapeSorter(inputFileName, ouputFileName);
-    tapeSorter.sort("../../tests/testDataFiles/", 2);
-
+    TapeSorter::TapeSorter tapeSorter;
+    std::string outputTempTapeFilesName("../../tests/testDataFiles/");
+    int countElementsInTempTape = 2;
+    tapeSorter.sort(tapeOriginal, tapeResult, outputTempTapeFilesName, countElementsInTempTape);
 
     std::sort(disorderedElements.begin(), disorderedElements.end());
     std::vector<int> orderedElements = disorderedElements;
 
 
-    TapeSorter::TapeImpl tapeImplExpected(ouputFileName);
-    TapeSorter::Tape &tapeExpected = tapeImplExpected;
-    GTEST_ASSERT_EQ(tapeExpected.readFull(), orderedElements);
+    GTEST_ASSERT_EQ(tapeResult.readFull(), orderedElements);
 }
 
 TEST(TapeSorter, Sorting_test2) {
@@ -267,28 +266,30 @@ TEST(TapeSorter, Sorting_test2) {
     int rightBorder = 1000;
 
     for (int i = 0; i < 5; ++i) {
-        TapeSorter::TapeGenerator::generateTape(inputFileName, countElements * (i + 1), leftBorder * (i + 1), rightBorder * (i + 1));
+        TapeSorter::TapeGenerator::generateTape(inputFileName, countElements * (i + 1), leftBorder * (i + 1),
+                                                rightBorder * (i + 1));
 
         TapeSorter::TapeImpl tapeImplOriginal(inputFileName);
         TapeSorter::Tape &tapeOriginal = tapeImplOriginal;
         std::vector<int> disorderedElements = tapeOriginal.readFull();
 
-        TapeSorter::TapeSorter tapeSorter(inputFileName, ouputFileName);
-        tapeSorter.sort("../../tests/testDataFiles/", 10);
+        TapeSorter::TapeImpl tapeImplResult(ouputFileName);
+        TapeSorter::Tape &tapeResult = tapeImplResult;
+
+        TapeSorter::TapeSorter tapeSorter;
+        std::string outputTempTapeFilesName("../../tests/testDataFiles/");
+        int countElementsInTempTape = 10;
+        tapeSorter.sort(tapeOriginal, tapeResult, outputTempTapeFilesName, countElementsInTempTape);
 
         std::sort(disorderedElements.begin(), disorderedElements.end());
         std::vector<int> orderedElements = disorderedElements;
 
-        TapeSorter::TapeImpl tapeImplExpected(ouputFileName);
-        TapeSorter::Tape &tapeExpected = tapeImplExpected;
-        GTEST_ASSERT_EQ(tapeExpected.readFull(), orderedElements);
+        GTEST_ASSERT_EQ(tapeResult.readFull(), orderedElements);
     }
 }
 
 
-
-
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

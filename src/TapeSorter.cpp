@@ -1,27 +1,23 @@
 #include <iostream>
 #include "TapeSorter.h"
 
-TapeSorter::TapeSorter::TapeSorter(const std::string &inputFileName, const std::string &outputFileName)
-        : inputFileName_(inputFileName), outputFileName_(outputFileName) {}
-
-TapeSorter::TapeSorter::TapeSorter(std::string &&inputFileName, std::string &&outputFileName)
-        : inputFileName_(std::move(inputFileName)), outputFileName_(std::move(outputFileName)) {}
+TapeSorter::TapeSorter::TapeSorter() = default;
 
 TapeSorter::TapeSorter::~TapeSorter() = default;
 
 
-void TapeSorter::TapeSorter::sort(const std::string &outputTempTapeFilesName, const int &countElementsInTempTape) {
+void TapeSorter::TapeSorter::sort(const Tape &inputTape, Tape &outputTape, const std::string &outputTempTapeFilesName, const int &countElementsInTempTape) {
     try {
-        size_t tempTapesCount = splitInputTape(outputTempTapeFilesName, countElementsInTempTape);
+        size_t tempTapesCount = splitInputTape(inputTape, outputTempTapeFilesName, countElementsInTempTape);
         sortTempTapes(tempTapesCount, outputTempTapeFilesName);
-        formResultTape(tempTapesCount, outputTempTapeFilesName);
+        formResultTape(outputTape, tempTapesCount, outputTempTapeFilesName);
     } catch (const std::exception &exception) {
         throw;
     }
 }
 
-size_t TapeSorter::TapeSorter::splitInputTape(const std::string &outputTempTapeFilesName, const int &countElementsInTempTape) {
-    std::ifstream inputFile(inputFileName_);
+size_t TapeSorter::TapeSorter::splitInputTape(const Tape &inputTape, const std::string &outputTempTapeFilesName, const int &countElementsInTempTape) {
+    std::ifstream inputFile(inputTape.fileName_);
     if (inputFile.is_open()) {
         int tempTapesCount = 0;
         std::string numberInString;
@@ -76,7 +72,7 @@ void TapeSorter::TapeSorter::sortTempTapes(const size_t &tempTapesCount, const s
     }
 }
 
-void TapeSorter::TapeSorter::formResultTape(const size_t &tempTapesCount, const std::string &outputTempTapeFilesName) {
+void TapeSorter::TapeSorter::formResultTape(Tape &outputTape, const size_t &tempTapesCount, const std::string &outputTempTapeFilesName) {
 
     using index = int;
     using element = int;
@@ -95,7 +91,7 @@ void TapeSorter::TapeSorter::formResultTape(const size_t &tempTapesCount, const 
         }
     }
 
-    std::ofstream resultFile(outputFileName_);
+    std::ofstream resultFile(outputTape.fileName_);
 
     while (true) {
         index indexMin = -1;

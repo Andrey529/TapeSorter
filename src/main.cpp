@@ -8,9 +8,17 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    TapeSorter::TapeSorter tapeSorter(argv[1], argv[2]);
+    TapeSorter::TapeSorter tapeSorter;
     try {
-        tapeSorter.sort("../tmp/", 2);
+        TapeSorter::TapeImpl tapeImplOrigin(argv[1]);
+        TapeSorter::Tape &tapeOrigin = tapeImplOrigin;
+
+        TapeSorter::TapeImpl tapeImplResult(argv[2]);
+        TapeSorter::Tape &tapeResult = tapeImplResult;
+
+        std::string outputTempTapeFilesName("../tmp/");
+        int countElementsInTempTape = 2;
+        tapeSorter.sort(tapeOrigin, tapeResult, outputTempTapeFilesName, countElementsInTempTape);
     } catch (const std::exception &exception) {
         std::cerr << exception.what() << std::endl;
         return -1;
